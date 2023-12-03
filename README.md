@@ -4,12 +4,11 @@ My personal blog on
 [sinanpl.github.io](https://sinanpl.github.io)
 built with [Quarto](https://quarto.org/)
 
-
 Notes for self & others interested in starting a blog with quarto.
 
 ---
-### Set-up
 
+### Set-up
 
 This repo is set up to work with github actions and will prepare
 an R & python environment as specified in requirements. 
