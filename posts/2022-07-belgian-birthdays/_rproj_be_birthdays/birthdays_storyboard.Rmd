@@ -1,0 +1,373 @@
+---
+title: "Births & conceptions in Belgium"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: lumen
+    source: embed
+    storyboard: true
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(ggplot2)
+library(ggiraph)
+library(plotly)
+
+births_conceptions_be = readRDS('births_conceptions_be.rds')
+theme_set(theme_minimal())
+
+# helpers ----------------------------------------------------------
+
+scale_date_custom = function() scale_x_date(
+  date_breaks = '2 years', date_labels = "'%y", 
+  limits = as.Date(c('1992-01-01', '2020-01-01'))
+)
+
+# knitr::opts_chunk$set(eval = FALSE)
+```
+
+### Births in Belgium between 1992 - 2020; or how you should **NOT** visualize the data.
+
+```{r}
+gg = ggplot(births_conceptions_be, 
+            aes(x=date, y = nbirths))+
+  geom_line()+
+  geom_smooth()+
+  scale_date_custom()+
+  scale_y_continuous(limits = c(0, 500))+ 
+  labs(
+    x = 'Year', 
+    y = 'Number of births', 
+    title = 'Daily births in Belgium<br><sup>Between 1992 and 2020</sup>', 
+  )
+
+plotly::ggplotly(gg) %>% 
+  plotly::style(traces = 2:3, hoverinfo = 'none')
+```
+
+------------------------------------------------------------------------
+
+Recently, one of my colleagues shared an open source dataset on the
+daily number of births in Belgium. Exploring the data, it quickly became
+clear birthdays are less random than you might think.
+
+In the next few blocks, I hope to have shared some insights. ---
+
+Let's start with the time series plot on the left. We can notice that
+there is 1. quite some **variation** in the number of births on any
+given moment 2. an indication for a **change in time**
+
+The plot isn't ideal though... you'll see why :-)
+
+------------------------------------------------------------------------
+
+
+### Our first improvement
+
+```{r}
+gg = ggplot(births_conceptions_be, 
+            aes(x=date, y = nbirths))+
+  geom_point(aes(weekday=weekday), size=.1)+
+  geom_smooth(se = FALSE)+
+  scale_date_custom()+
+  scale_y_continuous(limits = c(0, 500))+ 
+  scale_color_discrete()+
+  labs(
+    x = 'Year',
+    y = 'Number of births', 
+    color = 'Weekday', 
+    title = 'Daily births in Belgium'
+  )
+plotly::ggplotly(gg) %>% 
+  style(hoverinfo = 'none', traces = 2)
+```
+
+------------------------------------------------------------------------
+
+Clearly there is something going on...
+
+If you hover over the scatter cloud you quickly see an indication for
+the reason of such a difference.
+
+Or... just plain reasoning about impacting factors should work perfectly
+as well in this simple case :)
+
+### The effect of weekend on births
+
+```{r}
+gg = ggplot(births_conceptions_be, 
+            aes(x=date, y = nbirths, color = weekday))+
+  geom_point(size=.1)+
+  geom_smooth(se = FALSE)+
+  scale_date_custom()+
+  scale_y_continuous(limits = c(0, 500))+ 
+  scale_color_discrete()+
+  labs(
+    x = 'Year',
+    y = 'Number of births', 
+    color = 'Weekday', 
+    title = 'Daily births in Belgium<br><sup>Presence of a weekend effect</sup>'
+  )
+
+
+plotly::ggplotly(gg) %>% 
+  style(hoverinfo = 'none', traces =  8:14)
+```
+
+------------------------------------------------------------------------
+
+We could expect that births were lower in the weekend. However, that
+there is such a large difference might be surprising nonetheless.
+
+------------------------------------------------------------------------
+
+```{r, eval=FALSE, echo=FALSE}
+births_conceptions_be %>% 
+  filter(!is.na(nbirths)) %>% 
+  group_by(weekend = weekday %in% c('Sat', 'Sun')) %>% 
+  summarise(avg_daily_births = mean(nbirths))
+```
+
+Over the years, the average number of births during a weekend day is
+215. For weekdays, it is 373. On average, one is **1.73 times more
+likely to be born during a weekday**.\*
+
+------------------------------------------------------------------------
+
+\**Simplified example which does not take year, holidays etc. into
+account.*
+
+### An alternative representation: **birthday heatmap**
+
+```{r}
+hovertemplate  = "<b>{yy}</b>
+<i>{weekday} {dd} {month.abb[mm]}</i>
+
+No. births: <b>{nbirths}</b>
+Birthday popularity: <b>{round(bd_pop, 2)}</b>{tooltip_holiday}"
+
+heatmapdata = births_conceptions_be %>% 
+  filter(!is.na(nbirths)) %>% 
+  group_by(yy) %>% 
+  mutate(
+    bd_pop = nbirths / mean(nbirths), 
+    tooltip_holiday = ifelse(is.na(holiday), '', paste0('\nHoliday: <b>', holiday, '</b>')),
+    tooltip = glue::glue(hovertemplate),
+    Year = yy
+  )
+
+gg = ggplot(heatmapdata %>% filter(yy == 1992), 
+       aes(fill=bd_pop, x = dd, y = mm, frame = Year, text=tooltip))+
+  geom_tile()+
+  scale_fill_gradient2(midpoint = 1, breaks = seq(.4, 1.4, .2))+
+  scale_y_discrete(limits = rev)+
+  labs(
+    title = "Birthday popularity in 1992",
+    x = 'Day', y = "Month", 
+    fill = 'Birthday\npopularity')+
+  theme(
+    panel.background = element_blank(), 
+    panel.grid = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+
+plotly::ggplotly(gg, tooltip = 'text') %>% 
+  layout(
+    hoverlabel=list(bgcolor="white")
+  )
+```
+
+------------------------------------------------------------------------
+
+So, we've seen a time series and a scatter plot. The same data can be
+presented by means of the heatmap on the left. Purple days indicate more
+births on those days compared to average in that year. The opposite
+holds for the red tiles.
+
+------------------------------------------------------------------------
+
+Again, we can identify the weekend effect on this plot. The red tiles
+are mostly concentrated with two less common birthdays next to each
+other.
+
+### The heatmap, in motion
+
+```{r}
+
+
+gg = ggplot(heatmapdata, 
+       aes(fill=bd_pop, x = dd, y = mm, frame = Year, text=tooltip))+
+  geom_tile()+
+  scale_fill_gradient2(midpoint = 1, breaks = seq(.4, 1.4, .2))+
+  scale_x_discrete(position='top')+
+  scale_y_discrete(limits = rev)+
+  labs(x = 'Day', y = "Month", 
+       fill = 'Birthday\npopularity')+
+  theme(
+    panel.background = element_blank(), 
+    panel.grid = element_blank(),
+    axis.ticks = element_blank()
+  ) 
+
+plotly::ggplotly(gg, tooltip = 'text') %>% 
+  plotly::animation_slider(
+    pad = list(t = 10)
+  ) %>%
+  layout(
+    hoverlabel=list(bgcolor="white"),
+    xaxis=list(side='top')
+  ) %>%
+  animation_button(
+    visible = TRUE,
+    pad = list(r = 20)
+  )
+
+```
+
+------------------------------------------------------------------------
+
+Similar to the previous visual, we now have a sequence of heatmaps for
+consecutive years. Playing the animation will also make clear that the
+red blocks just shift horizontally as weekdays shift each year.
+
+------------------------------------------------------------------------
+
+Hovering over the tiles will give you some details. If you're born in
+1992 or later, you can check how common your birthday is during that
+year.
+
+------------------------------------------------------------------------
+
+In one of the next blocks, this visualization will help us to avoid
+making false conclusions!
+
+------------------------------------------------------------------------
+
+GIF available [here](file.gif)
+
+### Patterns in births = patterns in conceptions. *When do people conceive babies?*  {data-commentary-width="500"}
+
+
+```{r}
+# make data
+spiral_data =
+  births_conceptions_be %>% 
+  filter(!is.na(nconceptions)) %>% 
+  filter(!(mm == 2 & dd == 29)) %>%
+  group_by(yy, mm) %>% 
+
+  # daily avg per yymm
+  mutate(
+    yymm_mean = round(mean(nconceptions))
+  ) %>% 
+  group_by(yy) %>% 
+  # comparison yymm daily average to yy daily average and create rank
+  mutate(
+    month_conc_popularity = 13 - dense_rank(yymm_mean),
+    tooltip = glue::glue("<b>{month.name[mm]} {yy}</b>\n\nAvg daily conceptions: {yymm_mean}\nConception rank within year: <b>{month_conc_popularity}</b>"),
+  ) %>% 
+  ungroup() %>% 
+  
+  # helper variable for polar spiral
+  mutate(
+    day_of_year_cumsum = cumsum(day_of_year)
+  )
+
+# tickpos years; angular axis
+tickvals_years = spiral_data %>% 
+  filter(dd == 1, mm == 1, yy %in% c(1995, 2020)) %>% 
+  pull(day_of_year_cumsum)
+
+
+# tickpos months
+tickvals_months = as.integer(seq(as.Date('1970-01-15'), as.Date('1970-12-15'), by = 'month'))
+
+plot_ly(
+    spiral_data, 
+    colors = colorRamp(c('darkblue', 'white', 'darkred')),
+    type = 'scatterpolar',
+    mode = 'markers',
+    theta = ~day_of_year, 
+    r = ~day_of_year_cumsum, 
+    text = ~tooltip, 
+    color = ~factor(month_conc_popularity),
+    hoverinfo = 'text',
+    marker = list(size = 4)
+  ) %>%
+  layout(
+    legend = list(title = list(text = 'Daily average\nof conceptions\n<sup>relative to month within year\n\n1: most fertile\n12: least fertile</sup>\n')),
+    polar = list(
+      angularaxis  = list(
+        showline = FALSE,
+        showgrid = FALSE,
+        rotation = 90,
+        direction = "clockwise",
+        tickmode="array",
+        tickvals = tickvals_months,
+        ticktext = month.abb,
+        ticks = ''
+      ),
+      radialaxis = list(
+        # angle = 90,
+        # tickangle = 90, 
+        showline = FALSE,
+        showgrid = FALSE,
+        ticks = '', 
+        tickmode = 'array', 
+        tickvals = tickvals_years, 
+        ticktext = c("<b>1995</b>", "<b>2020</b>"), 
+        tickfont = list(color = "black")
+      )
+    ),
+    xaxis = list(
+    'showgrid' = FALSE, # thin lines in the background
+    'zeroline' = FALSE, # thick line at x=0
+    'visible' = FALSE   # numbers below
+    ),
+    yaxis = list(
+    'showgrid' = FALSE, # thin lines in the background
+    'zeroline' = FALSE, # thick line at x=0
+    'visible' = FALSE   # numbers below
+    )
+  )
+
+```
+
+------------------------------------------------------------------------
+
+<!-- TODO -->
+Last but not least, I created a spiral plot.
+
+For each month, the color indicates
+
+
+
+
+------------------------------------------------------------------------
+
+\**The choice of a 'spiral plot' for the conceptions was
+non-intentional. This visualization was somewhat inspired by this
+visualization on
+[COVID](https://www.nytimes.com/2022/01/06/opinion/omicron-covid-us.html)*
+
+------------------------------------------------------------------------
+
+
+Details on the data
+
+The dataset is made available Statbel, the Belgian statistical office.
+You can access it
+[here](https://statbel.fgov.be/en/open-data/number-births-day).
+
+The number of births per day between 1 Jan 1992 and 31 Dec 2020 are
+reported.
+
+Based on the dates, some extra features are included such as the
+weekday, day of year and Belgian historical holidays that were scraped
+[here](https://www.kalender-365.be/feestdagen/1991.html)
