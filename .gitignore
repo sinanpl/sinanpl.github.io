@@ -1,8 +1,13 @@
+**/.DS_store
+
 # project folders starting with underscore
 **/_**
 
 # except quarto yml file
 !_quarto.yml
+
+# and intermed rproj folder used for posts
+!**/_rproj**
 
 # output folders
 /_site/
