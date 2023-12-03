@@ -1,0 +1,75 @@
+---
+title: "Where does your name come from?"
+date: "2022-12-11"
+categories: []
+image: "image.png"
+description: Patterns in names can tell something about cultural origin. Something I experienced firsthand this week as subject of a targeted marketing campaign.
+---
+
+
+> Hi Sinan,
+> 
+> This month we bring the most inspiring productions from Turkish cinema.
+>
+> ...
+>
+> *Yakında görüşürüz*  
+> The Kinepolis Team
+
+This is an excerpt from a mail I received from the Belgian cinema chain 
+Kinepolis this week. I have never been to a Turkish movie at Kinepolis nor indicated such preference in my account, yet, Kinepolis correctly **inferred the origin of my name** being Turkish. 
+
+I was quite amused with this. Mostly because of this anecdote confirming
+my belief that a **surname gives away quite some information** on one's **cultural origin**.
+Did you know that [Ludwig *van* Beethoven's roots lie in Mechelen, Belgium](https://focusonbelgium.be/en/facts/did-you-know-ludwig-van-beethovens-roots-lie-mechelen)?
+
+
+### The study of names
+
+The study of individual's names is referred to as *anthroponymy*. 
+Activities within this field include classifying names with regards to gender and ethnicity to even tracing historical information.
+
+Before the availability of contemporary NLP techniques, classification was mostly limited to database retrieval of known assocations between names and attributes.
+
+More recently, researchers started to used machine learning models that learn **assocations** between **character patterns** in names and attributes such as gender, ethnicity etc.
+
+I think two simple aspects give tells on the origin of a name: unique characters and common affixes.
+
+#### Unique characters
+
+In first place, the occurrence of characters unique to a region is a big tell on the origin of a name. As the figure below illustrates, alphabets differ by region. And even when the same alphabet is used, sometimes there are minor differences in the presence of specific characters.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/World_alphabets_%26_writing_systems.svg/1920px-World_alphabets_%26_writing_systems.svg.png "World's writing systems"){fig-align="center"}
+
+If one would wonder the cultural origin of **حكيم زياش** (*Hakim Ziyech*), the Arabic characters significantly narrow the possible options. The similar holds for **Weiß**, as the ß (*Eszett*) is unique to the German language.
+
+This is quite obvious, but not very informative for the majority of names.
+
+
+#### Common affixes
+
+More relevant are the frequently occurring affixes in surnames. Sometimes, surnames have prefixes / suffixes that point towards a language / region. This list of [common name affixes](https://en.wikipedia.org/wiki/List_of_family_name_affixes) is longer than you might imagine.
+
+Simply, 'son of' already has >40 matches that characterise a language/region. A few examples, all denoting "son of":
+
+- Ben * (Arabic, Hebrew)
+- De * (Italian)
+- *dze (Georgian)
+- *escu (Romanian)
+- *ian (Armenian, Persian)
+- *ūnas (Lithuanian)
+- *oğlu (Turkish)
+
+Given the last example, you now know how Kinepolis got it right! :)
+
+### Name checker services
+
+There exist services that bring name information to your fingertips. **Namsor** is such an example, try it out [here](https://namsor.app/) - maybe even [using R](https://github.com/SinanPolatoglu/namsor).
+
+
+---
+:::{.small}
+*Hu, Y., Hu, C., Tran, T., Kasturi, T., Joseph, E., & Gillingham, M. (2021). What’s in a name?–gender classification of names with character based machine learning models. Data Mining and Knowledge Discovery, 35(4), 1537-1563.*
+
+*Mateos, P. (2007). A review of name‐based ethnicity classification methods and their potential in population studies. Population, Space and Place, 13(4), 243-263.*
+:::

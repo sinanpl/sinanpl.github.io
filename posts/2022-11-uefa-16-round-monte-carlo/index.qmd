@@ -1,0 +1,197 @@
+---
+title: "UEFA CL draws with Monte Carlo integration"
+date: "2022-11-06"
+categories: [R, statistics]
+image: "image.png"
+df-print: kable
+execute: 
+  echo: false
+description: UEFA Champions League group stages were finalized this week. I made predictions for which teams are more likely to play against each other using Monte Carlo integration.
+---
+
+```{r}
+#| include: false
+
+library(tidyverse)
+results = readRDS(here::here("posts/2022-11-uefa-16-round-monte-carlo/cl-16round-mc.rds"))
+attach(results)
+
+# probability of violating draw & most likely encounter
+prob_err = sprintf(100*NERRORS / NSIM,  fmt = "%.1f%%")
+prob_max = sprintf(100*max(probs$prob), fmt = "%.1f%%")
+
+# prob table
+
+probs_wide = probs  |> 
+    dplyr::select(t1, t2, prob) |> 
+    tidyr::pivot_wider(names_from=t2, values_from=prob, values_fill=NA) |> 
+    tibble::column_to_rownames("t1")
+
+# order teams by group
+team_gr_order = tbl_standing |> 
+    dplyr::arrange(group) |> 
+    split(~rnk) |> 
+    sapply(`[[`, "team")
+
+probs_wide = probs_wide[team_gr_order[, 1], team_gr_order[, 2] ] |> 
+    dplyr::rename(PSG = `Paris Saint-Germain`)
+
+# make table
+prob_tbl_gt = probs_wide |> 
+    gt::gt(rownames_to_stub = TRUE, caption="Predictions{#tbl-predictions}") |> 
+    gt::cols_width(colnames(probs_wide) ~ gt::px(80)) |> 
+    gt::data_color(
+        columns = everything(), 
+        colors = scales::col_numeric(
+            palette = c("white", "steelblue"),
+            domain = c(0, max(probs$prob)), 
+            na.color = "transparent"
+        )
+    ) |> 
+    gt::fmt_percent(everything(), decimal=1) |> 
+    gt::sub_missing(missing_text = "") |> 
+    gt::tab_options(
+        column_labels.border.top.style = "hidden", 
+        heading.title.font.size = 20
+
+    ) |> 
+    gt::cols_align(align = "center")
+
+```
+ 
+
+UEFA Champions League group stages were finalized this week. 
+Tomorrow, draws for the 16th round matches will take place.
+This provides an opportunity for predicting which teams are more 
+likely to play against each other.
+
+**Sneak peek**: chances are, **Bayern** and **Liverpool** will end up playing against each other.
+
+```{r}
+prob_tbl_gt
+```
+
+
+### How does the draw work?
+
+1. Group winners and runners-up in the group stages are separated into two pots.
+2. A team is randomly drawn from the first pot.
+3. The second pot is then rearranged to avoid encounters between teams from the same country or the same group
+4. The second team is drawn 
+5. Steps 2 - 4 are repeated until every team is drawn
+
+The pots for tomorrow are as follows.
+
+```{r}
+tbl_standing |> 
+    dplyr::select(-country) |> 
+    tidyr::pivot_wider(
+        names_from = rnk, 
+        values_from = team, 
+        names_prefix = "Pot "
+    ) |> 
+    dplyr::arrange(group)
+```
+
+
+More details on the [UEFA website](https://www.uefa.com/uefachampionsleague/news/027b-167f56b5d273-0267361a8b28-1000).
+
+### Caveats
+
+While the process is relatively simple, probability calculations are less so. Some reasons below.
+
+- **Asymmetric encounter probabilities**. For example, for Bayern, Club Brugge is 1 of the 4 potential opponents - whereas for Club Brugge, Bayern is 1 of the 7 potential opponents.
+
+- **Dependence on previous draws**. Each draw impacts subsequent event probabilities. If Club Brugge is drawn against a different team, Bayern only has 3 potential opponents left - which impacts probabilities.
+
+- It is possible that the sequence of draws results in the **final draws violating the rules**. Consider the scenario below, where the first 7 draws are:
+
+    |Draw|Team 1| Team 2|
+    |---|---------------|---------------------|
+    | 1 |       Benfica |         Club Brugge |
+    | 2 |        Napoli |           Frankfurt |
+    | 3 |   Real Madrid | Paris Saint-Germain |
+    | 4 |      Man City |             Leipzig |
+    | 5 |     Tottenham |               Milan |
+    | 6 |         Porto |           Liverpool |
+    | 7 |       Chelsea |               Inter |
+
+    The issue here is that the remaining teams are Bayern and Dortmund, which are both German teams and cannot play against each other. In other words, in this case the draw has to be restarted.
+
+### Monte Carlo
+
+
+A straightforward solution for aforementioned complexities is estimating encounter probabilities using Monte Carlo integration. Simply put, we **simulate** the 16th round draw **many times** and **count** to what extent 1) violations and 2) team encounters occur.
+
+
+::: {.callout-note collapse="true" icon="false"}
+
+## Show me some code
+
+Let's start with mimicking a single draw. 
+
+```{r}
+#| results: asis
+cat("```r\n")
+draw_ko_phase
+cat("\n```")
+```
+
+Where `tbl_standing` looks like this
+
+```{r}
+tbl_standing
+```
+
+The results of a single draw of this function is then:
+
+```{r}
+set.seed(1)
+draw_ko_phase()
+```
+
+In the end, Monte Carlo is about repeating the draw many times and calculating relative frequencies - accounting for potential errors due to the described problems.
+
+```{r}
+#| eval: false
+#| echo: true
+NERRORS <- 0
+NSIM <- 10000
+iter <- 1:NSIM
+
+results <- lapply(iter, function(i) {
+    tryCatch(
+        expr = draw_ko_phase(),
+        error = function(err) {
+            NERRORS <<- NERRORS + 1
+            return(NULL)
+        }
+    )
+})
+
+results |> 
+    bind_rows() |> 
+    count(t1, t2) |>
+    mutate(prob = n / (NSIM - NERRORS))
+```
+
+:::
+
+Firstly, the **probability of a restart** of the draw is **not to be underestimated**! 
+There is a **`r prob_err`** chance of having a draw that results in 
+a scenario where the final teams in the pots are from the same group / country.
+
+For the successful draws, estimations are presented in @tbl-predictions. 
+The values indicate the probability of encountering the opponent. 
+Chances are that the draw will result in a **16th round match between
+Bayern and Liverpool (`r prob_max`)**. In the context of Monte Carlo this can be interpreted as
+
+> From all the successful draws in the many repeats, `r prob_max` of the scenario's had an encounter between Bayern and Liverpool.
+
+### Recap
+
+- UEFA's restrictive rules can lead to imbalanced encounter probabilities.
+
+- In literature some corrections are described. See for example [Robers & Rosenthal (2022)](https://arxiv.org/abs/2205.06578).
+
+- In many complex situations Monte Carlo simulation is a very flexible method to obtain probabilities. 

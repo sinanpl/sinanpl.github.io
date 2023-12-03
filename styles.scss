@@ -1,0 +1,39 @@
+/*-- scss:rules --*/
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: $primary;
+    font-weight: 550;
+}
+
+/*-- css:rules --*/
+
+// navbar small caps
+.navbar-container {
+    font-variant: small-caps;
+}
+
+// hyperlink color
+a {
+    color: $primary;
+}
+
+// about page image size & margins
+.about-image {
+    margin-top: 2em !important;
+    width: 10em !important;
+    height: 10em !important;
+}
+
+.quarto-about-jolla {
+    width: 70% !important;
+    margin: auto !important;
+}
+
+// hide the description on the article page
+.description {
+    display: none;
+}

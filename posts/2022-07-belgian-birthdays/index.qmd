@@ -1,0 +1,33 @@
+---
+title: "Birthdays in Belgium"
+date: "2022-07-17"
+categories: [R, flexdashboard, open data]
+image: "image.png"
+description: Birth patterns are less random than one would think. I explored daily birth data and discuss the impact of weekdays and months.
+---
+
+Statbel, the Belgian statistical office, recently published an update of open data on birthdays in Belgium.
+I took the time to explore the data a bit. It reminded me of this neat
+[dashboard](https://public.tableau.com/app/profile/bo.mccready8742/viz/TheMostCommonBirthdaysintheUnitedStates/CommonBirthdays)
+I drew some inspiration from. 
+
+Compared to the US birthdays, the Belgian data is more granular and provides more opportunities to 
+retrieve some insights in **birth patterns**. It is surprising how 
+giving birth is **less random** than would one would initially assume.
+
+Most importantly, I observed: 
+
+- Effect of weekday: giving birth during weekend is far less common than giving birth on a weekday.
+- Effect of seasons: people reproduce more frequently between October - December. As a consequence, more people are born between August - September. 
+
+Have a look at the storyboard I created below. I start with how the time 
+series data look like and explore some insights with more adequate visualizations.
+
+
+#### Storyboard
+
+Also available [here](./_belgian_birthdays/birthdays_storyboard.html) in full screen.
+
+::: {.column-body-outset}
+<iframe src="_belgian_birthdays/birthdays_storyboard.html" height="600" width="100%"></iframe>
+:::

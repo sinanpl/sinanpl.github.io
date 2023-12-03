@@ -1,0 +1,49 @@
+---
+title: "Hypothesis testing in organizational settings"
+date: "2023-01-24"
+categories: [statistics]
+image: "image.png"
+description: In an organizational context, data professionals should be careful with hypothesis testing. Data-driven decisions should not rely on p-values only but also incorporate appraisal of effect sizes.
+---
+
+Hypothesis testing is a fundamental concept in analytics, often taught early in educational programs. However, in organizational settings it is crucial not to rely solely on p-values for drawing inferences.
+
+### Significance Testing in a Nutshell
+
+Significance testing can be summarized in the following steps:
+
+1.  Formulate a 'null hypothesis': Define the expected values for the test statistic, assuming that there is no effect.
+
+2.  Evaluate the extent to which the observed sample statistic deviates from the expected values. If the deviation is substantial, the null hypothesis will be rejected.
+
+3.  The decision to accept or reject the null hypothesis also depends on the chosen significance level, which represents the willingness to accept the alternative hypothesis.
+
+### Challenges in Organizational Contexts
+
+Hypothesis testing offers valuable insights, but its utility may diminish under certain conditions. Particularly in organizational contexts, possessing complete organizational data or a large sample makes inference based on p-values less appropriate.
+
+#### Complete Organizational Data
+
+Consider a scenario where you want to test if the average age in your organization deviates from an industry benchmark. Assuming you have the ages of all employees within your organization, you essentially have the entire population of interest, which removes the need for hypothesis testing and estimation. P-values lose their relevance as uncertainty is eliminated, allowing for direct calculation of precise population parameters. This ensures accurate conclusions and decision-making without the inherent limitations of p-values.
+
+![](image.png){fig-align="center" width="50%"}
+
+#### Large samples
+
+P-values are sensitive to sample size. Large samples may yield statistically significant results even when the effect size is negligible and practically insignificant. Consequently, relying exclusively on p-values in such cases could lead to misleading conclusions and unwarranted actions, while overlooking the practical relevance and actual impact of the observed effect.
+
+### Solution: Incorporate Effect Sizes
+
+Effect sizes offer valuable insights into the practical importance of findings by quantifying the magnitude of relationships. Including effect sizes alongside p-values in analyses enables more meaningful interpretations, ensuring that statistically significant results are also assessed for their real-world impact. This promotes informed decision-making and better-targeted interventions.
+
+Examples of effect sizes include:
+
+-   Cohen's d: Quantifies the difference between two group means, typically used in t-tests.
+
+-   Correlation coefficient: Measures the strength and direction of a linear relationship between two numeric variables.
+
+-   Eta-squared (η²): Measures the proportion of total variance in the dependent variable attributable to the effect of one of the independent variables.
+
+------------------------------------------------------------------------
+
+The above covers some key ideas of a post I collaborated on with my colleague [Maarten](https://be.linkedin.com/in/maarten-de-schryver-02b0306). Check out this [post](https://medium.com/@maartendeschryver/why-you-should-avoid-p-values-when-examining-the-gender-pay-gap-c96e6477a246) which discusses how it applies to rewards analytics and the pay gap.

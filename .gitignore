@@ -1,0 +1,9 @@
+# project folders starting with underscore
+**/_**
+
+# except quarto yml file
+!_quarto.yml
+
+# output folders
+/_site/
+/.quarto/

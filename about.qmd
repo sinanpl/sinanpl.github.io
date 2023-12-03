@@ -1,0 +1,57 @@
+---
+title: "Sinan Polatoglu"
+subtitle: "Machine Learning Engineer"
+image: https://avatars.githubusercontent.com/u/34659644
+about:
+  id: hero-heading
+  image-shape: round
+  template: trestles
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/SinanPolatoglu
+    - icon: github
+      text: Github
+      href: https://github.com/sinanpl
+---
+
+# {.smaller}
+
+Welcome to my corner of the digital world!
+
+I'm Sinan, and I'm passionate about leveraging the power of 
+machine learning to help organizations achieve their goals.
+
+I have a solid foundation of applied machine learning
+from a statistical learning perspective, mainly focused
+on tabular data. More recently, I've become more interested and experienced
+in productionizing machine learning products and NLP.
+
+Outside of my professional life, I'm an avid soccer fan, cinema enthusiast and keen reader. 
+But my deepest passion is rooted in music and finding inspiration in the melodies of the
+[bağlama](https://en.wikipedia.org/wiki/Ba%C4%9Flama) 
+and [ney](https://en.wikipedia.org/wiki/Ney). 
+
+I'm always keen to connect and exchange ideas, so [let's get in touch](https://linkedin.com/in/SinanPolatoglu)!
+
+------
+
+### Experience {.small}
+
+- **Xomnia** | Amsterdam, Netherlands  
+  Sep 2023 - present  
+
+- **Deloitte** | Brussels, Belgium  
+  Sep 2019 - Aug 2023
+
+### Education {.small}
+- **MSc. Statistical Data Analysis**  
+  2017 - 2019 | Ghent University  
+  Major Computational Statistics  
+  _Magna cum laude_
+
+
+- **MSc. Psychology**    
+  2016 - 2018 | Ghent University  
+  Option Personnel Management and Industrial Psychology  
+  _Cum laude_

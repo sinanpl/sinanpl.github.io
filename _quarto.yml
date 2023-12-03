@@ -1,0 +1,26 @@
+project:
+  type: website
+  preview:
+      port: 3000
+      browser: true
+
+website:
+  favicon: favicon.png
+  navbar:
+    left: 
+      - text: home
+        href: .
+    right:
+      - text: about
+        file: about.qmd
+      - icon: github
+        href: https://github.com/sinanpl/sinanpl.github.io
+
+format:
+  html:
+    theme: 
+      - flatly
+      - styles.scss
+
+execute: 
+  freeze: auto
