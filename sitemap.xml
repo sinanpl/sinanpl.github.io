@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://sinanpl.github.io/posts/2024-09-manage-multiple-git-accounts/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.727Z</lastmod>
-  </url>
-  <url>
-    <loc>https://sinanpl.github.io/posts/2022-07-belgian-birthdays/heatmap.html</loc>
-    <lastmod>2024-09-10T22:07:56.719Z</lastmod>
-  </url>
-  <url>
-    <loc>https://sinanpl.github.io/posts/2022-11-uefa-16-round-monte-carlo/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.723Z</lastmod>
-  </url>
-  <url>
     <loc>https://sinanpl.github.io/about.html</loc>
-    <lastmod>2024-09-10T22:07:56.651Z</lastmod>
-  </url>
-  <url>
-    <loc>https://sinanpl.github.io/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.651Z</lastmod>
-  </url>
-  <url>
-    <loc>https://sinanpl.github.io/posts/2022-12-name-origin/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.723Z</lastmod>
+    <lastmod>2024-09-11T06:16:03.138Z</lastmod>
   </url>
   <url>
     <loc>https://sinanpl.github.io/posts/2023-01-p-values-org-setting/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.727Z</lastmod>
+    <lastmod>2024-09-11T06:15:59.219Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sinanpl.github.io/posts/2022-12-name-origin/index.html</loc>
+    <lastmod>2024-09-11T06:15:58.362Z</lastmod>
   </url>
   <url>
     <loc>https://sinanpl.github.io/posts/2022-07-belgian-birthdays/index.html</loc>
-    <lastmod>2024-09-10T22:07:56.723Z</lastmod>
+    <lastmod>2024-09-11T06:15:57.881Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sinanpl.github.io/posts/2022-07-belgian-birthdays/heatmap.html</loc>
+    <lastmod>2024-09-11T06:15:58.075Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sinanpl.github.io/posts/2022-11-uefa-16-round-monte-carlo/index.html</loc>
+    <lastmod>2024-09-11T06:15:58.968Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sinanpl.github.io/posts/2024-09-manage-multiple-git-accounts/index.html</loc>
+    <lastmod>2024-09-11T06:16:00.979Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sinanpl.github.io/index.html</loc>
+    <lastmod>2024-09-11T06:16:02.914Z</lastmod>
   </url>
 </urlset>
