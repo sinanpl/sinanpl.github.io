@@ -1,0 +1,132 @@
+---
+title: "Multiple git accounts on one device"
+date: "2024-09-10"
+categories: [git]
+image: "dall-e.webp"
+description: Some guidelines on how to organise projects and configure git to have a smooth experience when working with multiple accounts on one device.
+format: 
+    html:
+        code-copy: true
+---
+
+The notes below are guidelines I documented for myself in the future after consulting mainly [this post](https://dev.to/fedekau/automatically-managing-personal-and-work-git-configurations-27ad)
+and its comments suggesting improvements. This is especially useful if you want to set-up multiple work / personal git accounts on one device as smoothly as possible (i.e. no hassles regarding private repo authorisation, account-level git settings, account-level commit metadata etc.). 
+
+Let's go through an example.
+
+---
+
+### Aim
+
+The aim of a smooth git setup is twofold
+
+**1) Authorization for private repos**  
+You should be able to interact with private repos using the right authorization key. For example, if you want to clone a private personal or work repo, git should know what SSH to use.
+
+**2) Configuration of git behavior**  
+Git should use the right configuration depending on the work / personal account. For example, if you are working on a work project, git should behave with different options related to merge strategy, commit metadata (email, username) etc.
+
+
+### Folder setup
+
+To select the correct authorization keys and configuration settings, work and personal projects should be organized into separate directories, as shown below
+
+```txt
+/Users/sinan
+├── work
+│   ├── ml_project
+│   └── rag_app
+└─- personal
+    ├── learnings
+    └── ds_utils_pkg
+```
+
+### SSH keys and configuration
+
+Create an SSH key for both accounts.
+
+> Note that you could use a single key for multiple accounts, 
+> but this is not recommended as it complicates access management and key rotation.
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/work
+ssh-keygen -t ed25519 -f ~/.ssh/personal
+```
+
+Next, create an SSH config file that points to the correct SSH keys
+
+`~/.ssh/config`
+```bash
+Host github.com-personal
+  HostName github.com
+  User sinanpl
+  IdentityFile ~/.ssh/personal
+
+Host github.com-work
+  HostName github.com
+  User sinan-work
+  IdentityFile ~/.ssh/work
+```
+
+At this point, you will be able to interact with private repos by using the work or personal host.
+Let's say you have a private repo in your personal account you want to pull, 
+you can use <code>git clone git@<mark>github.com-personal</mark>:sinanpl/ds_utils_pkg.git</code>. 
+Similarly, you can use the `github.com-work` suffix for pulling private work repos. 
+This is not ideal, but it can be improved in the following steps.
+
+### Account-level `git` config
+
+Create separate `.git.conf` files for your work and personal account such that 
+
+1) the host can be altered from `github.com-xxx` to `github.com`
+2) the account level settings can be configured such as:
+    - user name
+    - user email
+    - merge strategy
+    - default branch name
+    - ...
+
+In the end, the files should look like:
+
+`~/personal/.git.conf` 
+```ini
+[url "git@github.com-personal"]
+  insteadOf = git@github.com
+
+[user]
+  email = sinan@mail.com
+```
+
+`~/work/.git.conf` 
+```ini
+[url "git@github.com-personal"]
+  insteadOf = git@github.com
+
+[user]
+  email = sinan@work.com
+
+# example option
+# [pull]
+#   rebase = false
+```
+
+### Global `git` configuration
+
+Finally, you want to have a global configuration that dispatches to the 
+correct configuration (and authorization) when working from a specific folder.
+
+Create or update your global with the following
+
+```ini
+[includeIf "gitdir:~/work/"]
+    path = ~/work/.git.conf
+[includeIf "gitdir:~/personal/"]
+    path = ~/personal/.git.conf
+```
+
+### Result
+
+- Authorisation for work and personal accounts is separated
+- Cloning a private work repo from within your personal folder is not possible and vice versa.
+- Cloning private repos from the work or personal host no longer requires a suffix.
+- Git behaves differently depending on account specification
