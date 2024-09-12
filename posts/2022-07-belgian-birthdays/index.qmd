@@ -9,7 +9,7 @@ description: Birth patterns are less random than one would think. I explored dai
 
 > _UPDATE_  
 > Based on [this article](https://www.nieuwsblad.be/cnt/dmf20230509_97670703), 
-> I made an update for the heatmap which is shared [here](./heatmap.html)
+> I made an update for the heatmap which is shared [here](._rproj_be_birthdays/heatmap.html)
 
 ---
 
