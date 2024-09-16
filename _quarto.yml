@@ -5,6 +5,7 @@ project:
       browser: true
 
 website:
+  site-url: https://sinanpl.github.io/
   favicon: favicon.png
   navbar:
     left: 
@@ -15,7 +16,8 @@ website:
         file: about.qmd
       - icon: github
         href: https://github.com/sinanpl/sinanpl.github.io
-
+      - icon: rss
+        href: index.xml
 format:
   html:
     theme: 
